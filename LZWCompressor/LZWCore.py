@@ -1,3 +1,23 @@
+"""Reference.
+Usage:
+  LZWCore.py compress <FILE> [PATH]
+  LZWCore.py decompress <FILE> [PATH]
+
+Arguments:
+  FILE        input file
+  PATH        directory for saving converted file (optional)
+
+Examples:
+  LZWCore.py compress /temp/img.bmp /temp/compressed
+  LZWCore.py decompress /temp/img.lzw /temp/decompressed
+
+Options:
+  -h, --help
+"""
+
+from docopt import docopt
+
+
 import struct
 import time
 from numba import jit
@@ -123,3 +143,13 @@ print()
 
 print('Final time:')
 print(time.time() - main_t)
+
+
+
+if __name__ == '__main__':
+    # DocOpt
+    arguments = docopt(__doc__)
+    print(arguments)
+    print(type(arguments))
+    print(arguments['<FILE>'])
+    print(arguments['compress'])
