@@ -11,6 +11,8 @@ class Decoder:
         init_trie       - Initializing the trie
         trie_update     - Add item to trie
         decode          - Decode data
+        
+    *The dictionary is the trie.
     
     '''
 

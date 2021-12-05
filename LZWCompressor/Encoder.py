@@ -8,9 +8,11 @@ class Encoder:
     
     The class includes the following methods:
         __init__        - Object Initialization.
-        init_trie       - Initializing the trie
-        trie_update     - Add item to trie
-        encode          - Encode data
+        init_trie       - Initializing the trie.
+        trie_update     - Add item to trie.
+        encode          - Encode data.
+
+    *The dictionary is the trie.
     
     '''
 
@@ -24,9 +26,7 @@ class Encoder:
     def init_trie(self):
         ''' Create and initializing the trie '''
 
-        self.trie = {}
-        #self.trie = Dict()
-        
+        self.trie = {}       
         self.table_size = 0
 
 

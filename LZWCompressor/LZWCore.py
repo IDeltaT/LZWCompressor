@@ -34,20 +34,32 @@ main_t = time.time()
 
 t1 = time.time()
 encoder = Encoder()
+
+# ASCII punctuation and symbols
 encoder.trie_update(32, 47)
 encoder.trie_update(58, 64)
 encoder.trie_update(91, 96)
 encoder.trie_update(123, 126)
+
+# ASCII digits
 encoder.trie_update(48, 57)
+
+# Latin alphabet
 encoder.trie_update(65, 90)
 encoder.trie_update(97, 122)
 
 decoder = Decoder()
+
+# ASCII punctuation and symbols
 decoder.trie_update(32, 47)
 decoder.trie_update(58, 64)
 decoder.trie_update(91, 96)
 decoder.trie_update(123, 126)
+
+# ASCII digits
 decoder.trie_update(48, 57)
+
+# Latin alphabet
 decoder.trie_update(65, 90)
 decoder.trie_update(97, 122)
 
