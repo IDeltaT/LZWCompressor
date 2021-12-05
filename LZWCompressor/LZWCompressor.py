@@ -2,5 +2,5 @@ from LZWCore import LZWCore
 
 
 core = LZWCore()
-core.compress(l_time = True)
-core.decompress(l_time = True)
+core.compress(time_flag = True)
+core.decompress(time_flag = True)

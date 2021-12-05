@@ -19,9 +19,10 @@ Options:
 
 from docopt import docopt
 
+from numba import jit
+import os.path
 import struct
 import time
-from numba import jit
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -93,24 +94,28 @@ class LZWCore():
         return file_content
 
 
-    def save_compress_file(self, encoded_data: list, output_path: str):
+    def save_compress_file(self, 
+                           encoded_data: list, 
+                           output_path: str, 
+                           path: str):
         '''   '''
-        _save_compress_file(encoded_data, output_path)
+        _save_compress_file(encoded_data, output_path, path)
 
 
-    def compress(self, path: str = 'tests/text_test_1.txt', 
+    def compress(self, 
+                 path: str, 
                  output_path: str = 'tests/compressed/', 
-                 l_time: bool = False):
+                 time_flag: bool = False):
         '''  Compress the file using the LZV algorithm. '''
 
         lead_time = time.time()
 
         file_content = self.read_file_binary(path)
         encoded_data = self.encoder.encode(file_content, 32)       
-        self.save_compress_file(encoded_data, output_path)
+        self.save_compress_file(encoded_data, output_path, path)
 
         lead_time = time.time() - lead_time
-        if l_time:
+        if time_flag:
             print('Compress - Lead time:', str(lead_time) + 's.')
 
 
@@ -122,16 +127,21 @@ class LZWCore():
         return compressed_data
 
 
-    def save_decompress_file(self, decompressed_data: str):
+    def save_decompress_file(self, 
+                             decompressed_data: str, 
+                             path: str, 
+                             output_path: str):
         '''   '''
        
-        with open('tests/decompressed/' + 'DecompressFile', 'wb') as file:
+        file_name = path.split('\\')[-1].replace('.lzw', '')
+        with open(output_path + file_name, 'wb') as file:
             file.write(decompressed_data)
 
 
-
-    def decompress(self, path: str = 'tests/compressed/', 
-                   l_time: bool = False):
+    def decompress(self, 
+                   path: str, 
+                   output_path: str = 'tests\decompressed\\',
+                   time_flag: bool = False):
         ''' Decompress the file using the LZV algorithm. '''
 
         lead_time = time.time()
@@ -142,59 +152,107 @@ class LZWCore():
         decompressed_data = "b'" + decompressed_data + "'"
         decompressed_data = eval(decompressed_data)
 
-        self.save_decompress_file(decompressed_data)
+        self.save_decompress_file(decompressed_data, path, output_path)
 
         lead_time = time.time() - lead_time
-        if l_time:
+        if time_flag:
             print('Decompress - Lead time:', str(lead_time) + 's.')
 
 
 
 @jit()
-def _save_compress_file(encoded_data, output_path):
+def _save_compress_file(encoded_data: list, output_path: str, path: str):
     '''   '''
-    file_name = 'CompressFile' + '' + '.lzw'
-    if file_name:
-        file = open(output_path + file_name, "wb")
-        for data in encoded_data:
-            file.write(struct.pack('>I', int(data)))  
-        file.close()
+
+    file_name = path.split('\\')[-1] + '.lzw'
+
+    
+    # numba doesn't support WITH statement!!!
+    file = open(output_path + file_name, 'wb')
+
+    for data in encoded_data:
+        file.write(struct.pack('>I', int(data)))  
+    file.close()
 
 
 @jit()
-def _read_compress_file(path):
+def _read_compress_file(path: str):
     ''' '''
     compressed_data = []
 
-    file_name = 'CompressFile.lzw'
+    #file_name = path.split('\\')[-1]
+    #file_name = 'CompressFile.lzw'
 
-    if file_name:
-        file = open(path + file_name, "rb")
-        while True:
-            rec = file.read(4)
-            if len(rec) != 4:
-                break
-            (data, ) = struct.unpack('>I', rec)
-            compressed_data.append(data)
+    #if file_name:
+        #file = open(path + file_name, "rb")
+
+    # numba doesn't support WITH statement!!!
+    file = open(path, 'rb')
+
+    while True:
+        rec = file.read(4)
+        if len(rec) != 4:
+            break
+        (data, ) = struct.unpack('>I', rec)
+        compressed_data.append(data)
+    file.close()
 
     return compressed_data
 
 
-
-if __name__ == '__main__':
+def main():
     # DocOpt
     arguments = docopt(__doc__)
-    print(arguments)
-    print(type(arguments))
-    print(arguments['<FILE>'])
-    print(arguments['compress'])
-
-    ##################################################################
 
 
-    main_t = time.time()
-    print('Final time:')
-    print(time.time() - main_t)
+    # Validation
+    if arguments['compress']:
+        mode = 'c'
+    else:
+        mode = 'd'
+
+    file = arguments['<FILE>']
+    if not(os.path.isfile(file)):
+        print('File is not found!')
+        return
+
+    if mode == 'd':
+        if (file.split('.')[-1] != 'lzw'):
+            print('Need .lzw file!')
+            return
+
+    output = arguments['PATH']
+    if (output == None) or (os.path.isfile(output)) or (not(os.path.exists(output))):
+        output = '.\\'
+
+
+    time_flag = arguments['-t']
+
+    # Debug
+    print('mode:', mode)
+    print('file:', file)
+    print('output:', output)
+    print('time_flag:', time_flag)
+
+
+    # Process
+    core = LZWCore()
+
+    if mode == 'c':
+        try:
+            core.compress(file, output, time_flag)
+        except:
+            print('Compress Error!')
+    else:
+        try:
+            core.decompress(file, output, time_flag)
+        except:
+            print('Decompress Error!')
+    
+
+if __name__ == '__main__':
+    main()
+
 
 
 
