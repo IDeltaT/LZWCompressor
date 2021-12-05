@@ -98,7 +98,12 @@ class LZWCore():
                            encoded_data: list, 
                            output_path: str, 
                            path: str):
-        '''   '''
+        ''' 
+        Using an external "_save_compress_file" function to save a 
+        compressed file with a ".lzw" extension.
+        
+        '''
+
         _save_compress_file(encoded_data, output_path, path)
 
 
@@ -121,7 +126,11 @@ class LZWCore():
 
     # ------------------------- DECOMPRESS -------------------------- #
     def read_compress_file(self, path: str) -> list:
-        '''   '''
+        ''' 
+        Using an external "_read_compress_file" function 
+        to read a ".lzw" file .
+        
+        '''
 
         compressed_data = _read_compress_file(path)
         return compressed_data
@@ -131,8 +140,8 @@ class LZWCore():
                              decompressed_data: str, 
                              path: str, 
                              output_path: str):
-        '''   '''
-       
+        ''' Save the decompressed file to "output_path" directory. '''
+           
         file_name = path.split('\\')[-1].replace('.lzw', '')
         with open(output_path + file_name, 'wb') as file:
             file.write(decompressed_data)
@@ -159,14 +168,12 @@ class LZWCore():
             print('Decompress - Lead time:', str(lead_time) + 's.')
 
 
-
 @jit()
 def _save_compress_file(encoded_data: list, output_path: str, path: str):
-    '''   '''
+    ''' Save a compressed file with a ".lzw" extension.  '''
 
     file_name = path.split('\\')[-1] + '.lzw'
-
-    
+ 
     # numba doesn't support WITH statement!!!
     file = open(output_path + file_name, 'wb')
 
@@ -177,14 +184,9 @@ def _save_compress_file(encoded_data: list, output_path: str, path: str):
 
 @jit()
 def _read_compress_file(path: str):
-    ''' '''
+    ''' Read a ".lzw" file. '''
+
     compressed_data = []
-
-    #file_name = path.split('\\')[-1]
-    #file_name = 'CompressFile.lzw'
-
-    #if file_name:
-        #file = open(path + file_name, "rb")
 
     # numba doesn't support WITH statement!!!
     file = open(path, 'rb')
@@ -203,7 +205,6 @@ def _read_compress_file(path: str):
 def main():
     # DocOpt
     arguments = docopt(__doc__)
-
 
     # Validation
     if arguments['compress']:
@@ -225,15 +226,13 @@ def main():
     if (output == None) or (os.path.isfile(output)) or (not(os.path.exists(output))):
         output = '.\\'
 
-
     time_flag = arguments['-t']
 
     # Debug
-    print('mode:', mode)
-    print('file:', file)
-    print('output:', output)
-    print('time_flag:', time_flag)
-
+    #print('mode:', mode)
+    #print('file:', file)
+    #print('output:', output)
+    #print('time_flag:', time_flag)
 
     # Process
     core = LZWCore()
@@ -249,6 +248,7 @@ def main():
         except:
             print('Decompress Error!')
     
+
 
 if __name__ == '__main__':
     main()
