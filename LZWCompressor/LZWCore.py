@@ -17,7 +17,6 @@ Options:
 
 from docopt import docopt
 
-
 import struct
 import time
 from numba import jit
@@ -29,132 +28,106 @@ from Encoder import Encoder
 from Decoder import Decoder
 
 
+
+class LZWCore():
+    '''   '''
+    
+    def __init__(self):
+        ''' 
+        Init Encoder and Decoder.
+        Adding selected ranges to encoder and decoder dictionaries.
+        
+        '''
+
+        # Encoder init
+        self.encoder = Encoder()
+
+        # ASCII punctuation and symbols
+        self.encoder.trie_update(32, 47)
+        self.encoder.trie_update(58, 64)
+        self.encoder.trie_update(91, 96)
+        self.encoder.trie_update(123, 126)
+
+        # ASCII digits
+        self.encoder.trie_update(48, 57)
+
+        # Latin alphabet
+        self.encoder.trie_update(65, 90)
+        self.encoder.trie_update(97, 122)
+
+
+        # Decoder init
+        self.decoder = Decoder()
+
+        # ASCII punctuation and symbols
+        self.decoder.trie_update(32, 47)
+        self.decoder.trie_update(58, 64)
+        self.decoder.trie_update(91, 96)
+        self.decoder.trie_update(123, 126)
+
+        # ASCII digits
+        self.decoder.trie_update(48, 57)
+
+        # Latin alphabet
+        self.decoder.trie_update(65, 90)
+        self.decoder.trie_update(97, 122)
+
+
+    def read_fyle_binary(self, path):
+        '''   '''
+
+        with open(path, 'rb') as file:
+            file_content = str(file.read())
+        file_content = file_content[2:-1] # remove b''
+
+        return file_content
+
+
+    def save_compress_file(self, encoded_data, output_path):
+        _save_compress_file(encoded_data, output_path)
+
+
+    def encode(self, path = 'tests/text_test_1.txt', output_path = 'tests/compressed/'):
+
+        file_content = self.read_fyle_binary(path)
+        encoded_data = self.encoder.encode(file_content, 32)       
+        self.save_compress_file(encoded_data, output_path)
+
+
 main_t = time.time()
 
-
-t1 = time.time()
-encoder = Encoder()
-
-# ASCII punctuation and symbols
-encoder.trie_update(32, 47)
-encoder.trie_update(58, 64)
-encoder.trie_update(91, 96)
-encoder.trie_update(123, 126)
-
-# ASCII digits
-encoder.trie_update(48, 57)
-
-# Latin alphabet
-encoder.trie_update(65, 90)
-encoder.trie_update(97, 122)
-
-decoder = Decoder()
-
-# ASCII punctuation and symbols
-decoder.trie_update(32, 47)
-decoder.trie_update(58, 64)
-decoder.trie_update(91, 96)
-decoder.trie_update(123, 126)
-
-# ASCII digits
-decoder.trie_update(48, 57)
-
-# Latin alphabet
-decoder.trie_update(65, 90)
-decoder.trie_update(97, 122)
-
 print('Init decoder and encoder:')
-print(time.time() - t1)
-print()
 
 
-t1 = time.time()
-#file = open("test_2_bmp.bmp","rb")
-file = open("tests/text_test_1.txt","rb")
-
-fileContent = str(file.read())
-file.close()
-fileContent = fileContent[2:-1]
 print('Read file (bin mode):')
-print(time.time() - t1)
-print()
 
-
-t1 = time.time()
-result = encoder.encode(fileContent, 32)
+#t1 = time.time()
+#print(time.time() - t1)
 
 print('Encode:')
-print(time.time() - t1)
-print()
+
+
 
 
 @jit()
-def save_result(result):
+def _save_compress_file(encoded_data, output_path):
 
     file_name = 'CompressFile' + '' + '.lzw'
     if file_name:
-        encoded_data = result
-
-        file = open('tests/compressed/' + file_name, "wb")
+        file = open(output_path + file_name, "wb")
         for data in encoded_data:
             file.write(struct.pack('>I', int(data)))  
         file.close()
 
-t1 = time.time()
-save_result(result)
+
+#save_result(result)
 print('Save .lzw:')
-print(time.time() - t1)
-print()
 
 
 
 
-@jit()
-def insert_text():
-       
-    compressed_data = []
-
-    file_name = 'CompressFile.lzw'
-
-    if file_name:
-        file = open('tests/compressed/' + file_name, "rb")
-        while True:
-            rec = file.read(4)
-            if len(rec) != 4:
-                break
-            (data, ) = struct.unpack('>I', rec)
-            compressed_data.append(data)
-
-    return compressed_data
-
-t1 = time.time()
-compressed_data = insert_text()
-print('Read .lzw:')
-print(time.time() - t1)
-print()
 
 
-t1 = time.time()
-result = decoder.decode(compressed_data, 32)
-print('Decode:')
-print(time.time() - t1)
-print()
-
-
-result = "b'" + result + "'"
-
-
-t1 = time.time()
-file = open('tests/decompressed/' + 'DecompressFile', "wb")
-res = eval(result)
-file.write(res)
-file.close()
-print('Save file:')
-print(time.time() - t1)
-print()
-
-print('Final time:')
-print(time.time() - main_t)
 
 
 
@@ -165,3 +138,52 @@ if __name__ == '__main__':
     print(type(arguments))
     print(arguments['<FILE>'])
     print(arguments['compress'])
+
+    ##################################################################
+
+    @jit()
+    def insert_text():
+       
+        compressed_data = []
+
+        file_name = 'CompressFile.lzw'
+
+        if file_name:
+            file = open('tests/compressed/' + file_name, "rb")
+            while True:
+                rec = file.read(4)
+                if len(rec) != 4:
+                    break
+                (data, ) = struct.unpack('>I', rec)
+                compressed_data.append(data)
+
+        return compressed_data
+
+    t1 = time.time()
+    compressed_data = insert_text()
+    print('Read .lzw:')
+    print(time.time() - t1)
+    print()
+
+
+    t1 = time.time()
+    result = decoder.decode(compressed_data, 32)
+    print('Decode:')
+    print(time.time() - t1)
+    print()
+
+
+    result = "b'" + result + "'"
+
+
+    t1 = time.time()
+    file = open('tests/decompressed/' + 'DecompressFile', "wb")
+    res = eval(result)
+    file.write(res)
+    file.close()
+    print('Save file:')
+    print(time.time() - t1)
+    print()
+
+    print('Final time:')
+    print(time.time() - main_t)

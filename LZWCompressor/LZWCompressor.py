@@ -1,1 +1,5 @@
-import LZWCore
+from LZWCore import LZWCore
+
+
+core = LZWCore()
+core.encode()
