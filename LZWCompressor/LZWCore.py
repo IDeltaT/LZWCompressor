@@ -73,7 +73,8 @@ class LZWCore():
         self.decoder.trie_update(97, 122)
 
 
-    def read_fyle_binary(self, path):
+    # -------------------------- COMPRESS --------------------------- #
+    def read_file_binary(self, path):
         '''   '''
 
         with open(path, 'rb') as file:
@@ -84,14 +85,44 @@ class LZWCore():
 
 
     def save_compress_file(self, encoded_data, output_path):
+        '''   '''
         _save_compress_file(encoded_data, output_path)
 
 
-    def encode(self, path = 'tests/text_test_1.txt', output_path = 'tests/compressed/'):
+    def compress(self, path = 'tests/text_test_1.txt', output_path = 'tests/compressed/'):
+        '''   '''
 
-        file_content = self.read_fyle_binary(path)
+        file_content = self.read_file_binary(path)
         encoded_data = self.encoder.encode(file_content, 32)       
         self.save_compress_file(encoded_data, output_path)
+
+
+    # ------------------------- DECOMPRESS -------------------------- #
+    def read_compress_file(self, path):
+        '''   '''
+
+        compressed_data = _read_compress_file(path)
+        return compressed_data
+
+
+    def save_decompress_file(self, decompressed_data):
+        '''   '''
+       
+        with open('tests/decompressed/' + 'DecompressFile', 'wb') as file:
+            file.write(decompressed_data)
+
+
+
+    def decompress(self, path = 'tests/compressed/'):
+        '''   '''
+
+        compressed_data = self.read_compress_file(path)
+
+        decompressed_data = self.decoder.decode(compressed_data, 32)
+        decompressed_data = "b'" + decompressed_data + "'"
+        decompressed_data = eval(decompressed_data)
+
+        self.save_decompress_file(decompressed_data)
 
 
 main_t = time.time()
@@ -105,7 +136,6 @@ print('Read file (bin mode):')
 #print(time.time() - t1)
 
 print('Encode:')
-
 
 
 
@@ -125,9 +155,34 @@ print('Save .lzw:')
 
 
 
+@jit()
+def _read_compress_file(path):
+       
+    compressed_data = []
+
+    file_name = 'CompressFile.lzw'
+
+    if file_name:
+        file = open(path + file_name, "rb")
+        while True:
+            rec = file.read(4)
+            if len(rec) != 4:
+                break
+            (data, ) = struct.unpack('>I', rec)
+            compressed_data.append(data)
+
+    return compressed_data
+
+
+print('Read .lzw:')
+#compressed_data = insert_text()
+
+print('Decode:')
 
 
 
+print('Final time:')
+print(time.time() - main_t)
 
 
 
@@ -141,49 +196,8 @@ if __name__ == '__main__':
 
     ##################################################################
 
-    @jit()
-    def insert_text():
-       
-        compressed_data = []
-
-        file_name = 'CompressFile.lzw'
-
-        if file_name:
-            file = open('tests/compressed/' + file_name, "rb")
-            while True:
-                rec = file.read(4)
-                if len(rec) != 4:
-                    break
-                (data, ) = struct.unpack('>I', rec)
-                compressed_data.append(data)
-
-        return compressed_data
-
-    t1 = time.time()
-    compressed_data = insert_text()
-    print('Read .lzw:')
-    print(time.time() - t1)
-    print()
 
 
-    t1 = time.time()
-    result = decoder.decode(compressed_data, 32)
-    print('Decode:')
-    print(time.time() - t1)
-    print()
 
 
-    result = "b'" + result + "'"
 
-
-    t1 = time.time()
-    file = open('tests/decompressed/' + 'DecompressFile', "wb")
-    res = eval(result)
-    file.write(res)
-    file.close()
-    print('Save file:')
-    print(time.time() - t1)
-    print()
-
-    print('Final time:')
-    print(time.time() - main_t)

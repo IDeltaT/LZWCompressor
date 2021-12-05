@@ -2,4 +2,5 @@ from LZWCore import LZWCore
 
 
 core = LZWCore()
-core.encode()
+core.compress()
+core.decompress()
