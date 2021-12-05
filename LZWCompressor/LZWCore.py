@@ -1,7 +1,7 @@
 """Reference.
 Usage:
-  LZWCore.py compress <FILE> [PATH]
-  LZWCore.py decompress <FILE> [PATH]
+  LZWCore.py compress <FILE> [PATH] [-t]
+  LZWCore.py decompress <FILE> [PATH] [-t]
 
 Arguments:
   FILE        input file
@@ -12,7 +12,9 @@ Examples:
   LZWCore.py decompress /temp/img.lzw /temp/decompressed
 
 Options:
-  -h, --help
+  -h, --help    Show reference.
+  -t            Show lead time.
+
 """
 
 from docopt import docopt
@@ -30,7 +32,14 @@ from Decoder import Decoder
 
 
 class LZWCore():
-    '''   '''
+    ''' 
+    Implementation of a universal lossless data compression 
+    algorithm - LZW.
+
+    The class includes the following main methods:
+        compress        - Compress the file using the LZV algorithm.
+        decompress      - Decompress the file using the LZV algorithm.
+    '''
     
     def __init__(self):
         ''' 
@@ -74,8 +83,8 @@ class LZWCore():
 
 
     # -------------------------- COMPRESS --------------------------- #
-    def read_file_binary(self, path):
-        '''   '''
+    def read_file_binary(self, path: str) -> str:
+        ''' Open a file in binary mode and read the whole file. '''
 
         with open(path, 'rb') as file:
             file_content = str(file.read())
@@ -84,28 +93,36 @@ class LZWCore():
         return file_content
 
 
-    def save_compress_file(self, encoded_data, output_path):
+    def save_compress_file(self, encoded_data: list, output_path: str):
         '''   '''
         _save_compress_file(encoded_data, output_path)
 
 
-    def compress(self, path = 'tests/text_test_1.txt', output_path = 'tests/compressed/'):
-        '''   '''
+    def compress(self, path: str = 'tests/text_test_1.txt', 
+                 output_path: str = 'tests/compressed/', 
+                 l_time: bool = False):
+        '''  Compress the file using the LZV algorithm. '''
+
+        lead_time = time.time()
 
         file_content = self.read_file_binary(path)
         encoded_data = self.encoder.encode(file_content, 32)       
         self.save_compress_file(encoded_data, output_path)
 
+        lead_time = time.time() - lead_time
+        if l_time:
+            print('Compress - Lead time:', str(lead_time) + 's.')
+
 
     # ------------------------- DECOMPRESS -------------------------- #
-    def read_compress_file(self, path):
+    def read_compress_file(self, path: str) -> list:
         '''   '''
 
         compressed_data = _read_compress_file(path)
         return compressed_data
 
 
-    def save_decompress_file(self, decompressed_data):
+    def save_decompress_file(self, decompressed_data: str):
         '''   '''
        
         with open('tests/decompressed/' + 'DecompressFile', 'wb') as file:
@@ -113,8 +130,11 @@ class LZWCore():
 
 
 
-    def decompress(self, path = 'tests/compressed/'):
-        '''   '''
+    def decompress(self, path: str = 'tests/compressed/', 
+                   l_time: bool = False):
+        ''' Decompress the file using the LZV algorithm. '''
+
+        lead_time = time.time()
 
         compressed_data = self.read_compress_file(path)
 
@@ -124,24 +144,15 @@ class LZWCore():
 
         self.save_decompress_file(decompressed_data)
 
-
-main_t = time.time()
-
-print('Init decoder and encoder:')
-
-
-print('Read file (bin mode):')
-
-#t1 = time.time()
-#print(time.time() - t1)
-
-print('Encode:')
+        lead_time = time.time() - lead_time
+        if l_time:
+            print('Decompress - Lead time:', str(lead_time) + 's.')
 
 
 
 @jit()
 def _save_compress_file(encoded_data, output_path):
-
+    '''   '''
     file_name = 'CompressFile' + '' + '.lzw'
     if file_name:
         file = open(output_path + file_name, "wb")
@@ -150,14 +161,9 @@ def _save_compress_file(encoded_data, output_path):
         file.close()
 
 
-#save_result(result)
-print('Save .lzw:')
-
-
-
 @jit()
 def _read_compress_file(path):
-       
+    ''' '''
     compressed_data = []
 
     file_name = 'CompressFile.lzw'
@@ -174,17 +180,6 @@ def _read_compress_file(path):
     return compressed_data
 
 
-print('Read .lzw:')
-#compressed_data = insert_text()
-
-print('Decode:')
-
-
-
-print('Final time:')
-print(time.time() - main_t)
-
-
 
 if __name__ == '__main__':
     # DocOpt
@@ -197,7 +192,9 @@ if __name__ == '__main__':
     ##################################################################
 
 
-
+    main_t = time.time()
+    print('Final time:')
+    print(time.time() - main_t)
 
 
 
