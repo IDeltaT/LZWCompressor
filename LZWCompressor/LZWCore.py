@@ -142,7 +142,9 @@ class LZWCore():
                              output_path: str):
         ''' Save the decompressed file to "output_path" directory. '''
            
-        file_name = path.split('\\')[-1].replace('.lzw', '')
+        file_name = path.split('\\')[-1]
+        file_name = file_name.split('/')[-1].replace('.lzw', '')
+
         with open(output_path + file_name, 'wb') as file:
             file.write(decompressed_data)
 
