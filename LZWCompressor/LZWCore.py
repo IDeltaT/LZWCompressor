@@ -51,6 +51,17 @@ class LZWCore():
 
         # Encoder init
         self.encoder = Encoder()
+        self.reset_encoder()
+
+        # Decoder init
+        self.decoder = Decoder()
+        self.reset_decoder()
+
+
+    def reset_encoder(self):
+        ''' Adding selected ranges to encoder dictionaries. '''
+
+        self.encoder.init_trie()
 
         # ASCII punctuation and symbols
         self.encoder.trie_update(32, 47)
@@ -66,8 +77,10 @@ class LZWCore():
         self.encoder.trie_update(97, 122)
 
 
-        # Decoder init
-        self.decoder = Decoder()
+    def reset_decoder(self):
+        ''' Adding selected ranges to decoder dictionaries. '''
+
+        self.decoder.init_trie()
 
         # ASCII punctuation and symbols
         self.decoder.trie_update(32, 47)
