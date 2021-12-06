@@ -142,6 +142,7 @@ class LZWCore():
                              output_path: str):
         ''' Save the decompressed file to "output_path" directory. '''
            
+        # Processing '\' and '/' paths.
         file_name = path.split('\\')[-1]
         file_name = file_name.split('/')[-1].replace('.lzw', '')
 
@@ -174,6 +175,7 @@ class LZWCore():
 def _save_compress_file(encoded_data: list, output_path: str, path: str):
     ''' Save a compressed file with a ".lzw" extension.  '''
 
+    # Processing '\' and '/' paths.
     file_name = path.split('\\')[-1]
     file_name = file_name.split('/')[-1] + '.lzw'
 
@@ -229,15 +231,10 @@ def main():
 
     output = arguments['PATH']
     if (output == None) or (os.path.isfile(output)) or (not(os.path.exists(output))):
+        # By default, save the file next to the executable.
         output = '.\\'
 
     time_flag = arguments['-t']
-
-    # Debug
-    #print('mode:', mode)
-    #print('file:', file)
-    #print('output:', output)
-    #print('time_flag:', time_flag)
 
     # Process
     core = LZWCore()

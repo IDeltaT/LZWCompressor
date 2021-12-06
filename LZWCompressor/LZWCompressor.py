@@ -10,6 +10,12 @@ import os.path
 
 
 def select_file(mode: bool, e_input_file: ttk.Entry):
+    '''
+    Depending on the mode (compress / decompress) open the file 
+    selection window (All files / .lzw) and write the resulting 
+    path to entry "e_input_file".
+    
+    '''
 
     if mode:
         # Decompress
@@ -24,6 +30,11 @@ def select_file(mode: bool, e_input_file: ttk.Entry):
 
 
 def select_save_directory(e_output_dir: ttk.Entry):
+    ''' 
+    Open the folder selection window and write the resulting path to 
+    entry "e_output_dir".
+    
+    '''
 
     e_output_dir.delete(0, END)
     folder_selected = fd.askdirectory()
@@ -35,9 +46,14 @@ def comress_or_decompress_file(core: LZWCore,
                                input_file: str, 
                                output_dir: str, 
                                txt_output: Text):
+    '''
+    Depending on the mode, compress or decompress the "input_file" 
+    file and place it in the "output_dir" directory.
     
+    '''
 
     if (output_dir == None) or (os.path.isfile(output_dir)) or (not(os.path.exists(output_dir))):
+        # By default, save the file next to the executable.
         output_dir = '.\\'
     else:
         output_dir = output_dir + '/'
@@ -53,7 +69,7 @@ def comress_or_decompress_file(core: LZWCore,
     txt_output.delete(1.0, END)
     txt_output.insert(1.0, 'Success!')
 
-######################################################################
+
 def main():
 
     theme_bg_color = '#464646'
