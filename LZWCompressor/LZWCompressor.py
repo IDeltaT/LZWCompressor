@@ -5,6 +5,8 @@ from tkinter import ttk
 from ttkthemes import ThemedTk
 from tkinter import filedialog as fd
 
+import os.path
+
 
 
 def select_file(mode: bool, e_input_file: ttk.Entry):
@@ -20,8 +22,6 @@ def select_file(mode: bool, e_input_file: ttk.Entry):
     e_input_file.delete(0, END)
     e_input_file.insert(0, file_name)
 
-    if file_name:
-        pass
 
 def select_save_directory(e_output_dir: ttk.Entry):
 
@@ -30,6 +30,28 @@ def select_save_directory(e_output_dir: ttk.Entry):
     e_output_dir.insert(0, folder_selected)
 
 
+def comress_or_decompress_file(core: LZWCore,
+                               mode: bool, 
+                               input_file: str, 
+                               output_dir: str, 
+                               txt_output: Text):
+    
+
+    if (output_dir == None) or (os.path.isfile(output_dir)) or (not(os.path.exists(output_dir))):
+        output_dir = '.\\'
+    else:
+        output_dir = output_dir + '/'
+
+    if mode:
+        # Decompress
+        core.decompress(input_file, output_dir, time_flag = False)
+        
+    else:   
+        # Compress
+        core.compress(input_file, output_dir, time_flag = False)
+
+    txt_output.delete(1.0, END)
+    txt_output.insert(1.0, 'Success!')
 
 ######################################################################
 def main():
@@ -39,8 +61,6 @@ def main():
     theme_txt_bg_color = '#373737'
 
     core = LZWCore()
-    #core.compress(time_flag = True)
-    #core.decompress(time_flag = True)
 
     #------------------------- Main Window ---------------------------#
     root = ThemedTk(theme = "equilux")
@@ -108,10 +128,11 @@ def main():
 
     #----------------------------- Start -----------------------------#
     b_start = ttk.Button(root, text = "start", width = 13)
-    b_start.config(command = lambda: temp(int(r_var.get()),
-                                          str(e_input_file.get()),
-                                          str(e_output_dir.get()),
-                                          txt_output))
+    b_start.config(command = lambda: comress_or_decompress_file(core,
+                                                                int(r_var.get()),
+                                                                str(e_input_file.get()),
+                                                                str(e_output_dir.get()),
+                                                                txt_output))
 
     #---------------------------- Select -----------------------------#
     b_select_file = ttk.Button(root, text = "...", width = 2)

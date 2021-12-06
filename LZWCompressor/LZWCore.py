@@ -109,7 +109,7 @@ class LZWCore():
 
     def compress(self, 
                  path: str, 
-                 output_path: str = 'tests/compressed/', 
+                 output_path: str, 
                  time_flag: bool = False):
         '''  Compress the file using the LZV algorithm. '''
 
@@ -149,7 +149,7 @@ class LZWCore():
 
     def decompress(self, 
                    path: str, 
-                   output_path: str = 'tests\decompressed\\',
+                   output_path: str,
                    time_flag: bool = False):
         ''' Decompress the file using the LZV algorithm. '''
 
@@ -172,14 +172,17 @@ class LZWCore():
 def _save_compress_file(encoded_data: list, output_path: str, path: str):
     ''' Save a compressed file with a ".lzw" extension.  '''
 
-    file_name = path.split('\\')[-1] + '.lzw'
- 
+    file_name = path.split('\\')[-1]
+    file_name = file_name.split('/')[-1] + '.lzw'
+
+  
     # numba doesn't support WITH statement!!!
     file = open(output_path + file_name, 'wb')
 
     for data in encoded_data:
         file.write(struct.pack('>I', int(data)))  
     file.close()
+    
 
 
 @jit()
