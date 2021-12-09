@@ -58,7 +58,7 @@ class LZWCore():
         self.reset_decoder()
 
 
-    def reset_encoder(self):
+    def reset_encoder(self) -> None:
         ''' Adding selected ranges to encoder dictionaries. '''
 
         self.encoder.init_trie()
@@ -77,7 +77,7 @@ class LZWCore():
         self.encoder.trie_update(97, 122)
 
 
-    def reset_decoder(self):
+    def reset_decoder(self) -> None:
         ''' Adding selected ranges to decoder dictionaries. '''
 
         self.decoder.init_trie()
@@ -110,7 +110,7 @@ class LZWCore():
     def save_compress_file(self, 
                            encoded_data: list, 
                            output_path: str, 
-                           path: str):
+                           path: str) -> None:
         ''' 
         Using an external "_save_compress_file" function to save a 
         compressed file with a ".lzw" extension.
@@ -123,7 +123,7 @@ class LZWCore():
     def compress(self, 
                  path: str, 
                  output_path: str, 
-                 time_flag: bool = False):
+                 time_flag: bool = False) -> None:
         '''  Compress the file using the LZV algorithm. '''
 
         lead_time = time.time()
@@ -152,7 +152,7 @@ class LZWCore():
     def save_decompress_file(self, 
                              decompressed_data: str, 
                              path: str, 
-                             output_path: str):
+                             output_path: str) -> None:
         ''' Save the decompressed file to "output_path" directory. '''
            
         # Processing '\' and '/' paths.
@@ -166,7 +166,7 @@ class LZWCore():
     def decompress(self, 
                    path: str, 
                    output_path: str,
-                   time_flag: bool = False):
+                   time_flag: bool = False) -> None:
         ''' Decompress the file using the LZV algorithm. '''
 
         lead_time = time.time()
@@ -185,7 +185,9 @@ class LZWCore():
 
 
 @jit()
-def _save_compress_file(encoded_data: list, output_path: str, path: str):
+def _save_compress_file(encoded_data: list, 
+                        output_path: str, 
+                        path: str) -> None:
     ''' Save a compressed file with a ".lzw" extension.  '''
 
     # Processing '\' and '/' paths.
@@ -203,7 +205,7 @@ def _save_compress_file(encoded_data: list, output_path: str, path: str):
 
 
 @jit()
-def _read_compress_file(path: str):
+def _read_compress_file(path: str) -> list:
     ''' Read a ".lzw" file. '''
 
     compressed_data = []

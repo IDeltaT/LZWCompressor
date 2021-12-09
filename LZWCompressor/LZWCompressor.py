@@ -9,7 +9,7 @@ import os.path
 import time
 
 
-def select_file(mode: bool, e_input_file: ttk.Entry):
+def select_file(mode: bool, e_input_file: ttk.Entry)  -> None:
     '''
     Depending on the mode (compress / decompress) open the file 
     selection window (All files / .lzw) and write the resulting 
@@ -29,7 +29,7 @@ def select_file(mode: bool, e_input_file: ttk.Entry):
     e_input_file.insert(0, file_name)
 
 
-def select_save_directory(e_output_dir: ttk.Entry):
+def select_save_directory(e_output_dir: ttk.Entry) -> None:
     ''' 
     Open the folder selection window and write the resulting path to 
     entry "e_output_dir".
@@ -45,7 +45,7 @@ def comress_or_decompress_file(core: LZWCore,
                                mode: bool, 
                                input_file: str, 
                                output_dir: str, 
-                               txt_output: Text):
+                               txt_output: Text) -> None:
     '''
     Depending on the mode, compress or decompress "input_file" 
     and place it in the "output_dir" directory.
@@ -149,14 +149,13 @@ def main():
                                variable = r_var, 
                                value = 1)
 
-    def delete_text_input_entry(*arg):
+    # Сlearing "e_input_file" on mode change.
+    def delete_text_input_entry(*arg) -> None:
         e_input_file.delete(0, END)
     r_var.trace('w', delete_text_input_entry)
 
-
     r_compress.pack()
     r_decompress.pack()
-
 
     #----------------------------- Start -----------------------------#
     b_start = ttk.Button(root, text = "start", width = 13)
