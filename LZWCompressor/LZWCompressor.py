@@ -6,7 +6,7 @@ from ttkthemes import ThemedTk
 from tkinter import filedialog as fd
 
 import os.path
-
+import time
 
 
 def select_file(mode: bool, e_input_file: ttk.Entry):
@@ -61,8 +61,11 @@ def comress_or_decompress_file(core: LZWCore,
     if mode:
         # Decompress
         try:
+            lead_time = time.time()
             core.decompress(input_file, output_dir, time_flag = False)
-            output_text = 'Decompress - Success!'
+            lead_time = time.time() - lead_time
+            output_text = 'Decompress - Success!\nLead time: '
+            output_text += str(lead_time) + 's.'
         except:
             output_text = 'Decompress error!'
         core.reset_decoder()
@@ -70,8 +73,11 @@ def comress_or_decompress_file(core: LZWCore,
     else:   
         # Compress
         try:
+            lead_time = time.time()
             core.compress(input_file, output_dir, time_flag = False)
-            output_text = 'Compress - Success!'
+            lead_time = time.time() - lead_time
+            output_text = 'Compress - Success!\nLead time: '
+            output_text += str(lead_time) + 's.'
         except:
             output_text = 'Compress error!'
         core.reset_encoder()
