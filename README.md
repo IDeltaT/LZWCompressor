@@ -51,6 +51,11 @@ The larger the file size and the more duplicate values it contains, the higher t
 For this reason, the software is better at compressing file formats such as ".bmp" or ".txt".
 With other file formats, the compressed file may be larger than the original size.
 
+In the directory "LZWCompression\tests\" you can see the results of the program. 
+"text_test_1.txt" is a duplicate text.
+"text_test_2.txt" is not a duplicate text. 
+Duplicate text ("text_test_1.txt") is compressed better by the software.
+
 After compression, there are two extensions in the file name, the first is the original file extension, the second is ".lzw". 
 For example "file_name.txt.lzw". This file name helps to restore the original file extension when decompressed.
 
