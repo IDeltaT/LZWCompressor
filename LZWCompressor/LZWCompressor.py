@@ -47,8 +47,8 @@ def comress_or_decompress_file(core: LZWCore,
                                output_dir: str, 
                                txt_output: Text):
     '''
-    Depending on the mode, compress or decompress the "input_file" 
-    file and place it in the "output_dir" directory.
+    Depending on the mode, compress or decompress "input_file" 
+    and place it in the "output_dir" directory.
     
     '''
 
