@@ -60,16 +60,24 @@ def comress_or_decompress_file(core: LZWCore,
 
     if mode:
         # Decompress
-        core.decompress(input_file, output_dir, time_flag = False)
+        try:
+            core.decompress(input_file, output_dir, time_flag = False)
+            output_text = 'Decompress - Success!'
+        except:
+            output_text = 'Decompress error!'
         core.reset_decoder()
         
     else:   
         # Compress
-        core.compress(input_file, output_dir, time_flag = False)
+        try:
+            core.compress(input_file, output_dir, time_flag = False)
+            output_text = 'Compress - Success!'
+        except:
+            output_text = 'Compress error!'
         core.reset_encoder()
 
     txt_output.delete(1.0, END)
-    txt_output.insert(1.0, 'Success!')
+    txt_output.insert(1.0, output_text)
 
 
 def main():
